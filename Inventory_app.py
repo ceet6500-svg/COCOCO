@@ -7,7 +7,46 @@ import plotly.express as px
 import io # For Excel Download
 import matplotlib.pyplot as plt # Fix for background_gradient
 
-# --- CAPA 容量資料 (250 筆完整數據) ---
+# --- CAPA 容量資料 (250 筆完整數據 - 保持不變，用於修復店名) ---
+DEFAULT_CAPA_DATA = [
+    {'SHOP NUMBER': '2033', 'SUB REGION': '9F', 'SHOP NAME': 'SC PLAZA ORIENTE', 'CAPA_QTY': 429},
+    {'SHOP NUMBER': '3861', 'SUB REGION': '5D', 'SHOP NAME': 'SC REVOLUCION', 'CAPA_QTY': 402},
+    {'SHOP NUMBER': '4547', 'SUB REGION': '9F', 'SHOP NAME': 'SC PLAZA EDUARDO MOLINA', 'CAPA_QTY': 399},
+    {'SHOP NUMBER': '2347', 'SUB REGION': '9F', 'SHOP NAME': 'SC TLAHUAC', 'CAPA_QTY': 359},
+    {'SHOP NUMBER': '2344', 'SUB REGION': '9F', 'SHOP NAME': 'SC TOREO', 'CAPA_QTY': 358},
+    {'SHOP NUMBER': '2345', 'SUB REGION': '9F', 'SHOP NAME': 'SC TEPEYAC', 'CAPA_QTY': 352},
+    {'SHOP NUMBER': '1107', 'SUB REGION': '9F', 'SHOP NAME': 'SC IXTAPALUCA', 'CAPA_QTY': 333},
+    {'SHOP NUMBER': '2079', 'SUB REGION': '9F', 'SHOP NAME': 'SC CD JARDIN', 'CAPA_QTY': 312},
+    {'SHOP NUMBER': '3005', 'SUB REGION': '9F', 'SHOP NAME': 'SC PLAZA ARAGON', 'CAPA_QTY': 297},
+    {'SHOP NUMBER': '3020', 'SUB REGION': '9F', 'SHOP NAME': 'BA XALOSTOC', 'CAPA_QTY': 295},
+    {'SHOP NUMBER': '1489', 'SUB REGION': '9F', 'SHOP NAME': 'SC HIPERPLAZA TEXCOCO', 'CAPA_QTY': 253},
+    {'SHOP NUMBER': '3799', 'SUB REGION': '9F', 'SHOP NAME': 'BA LOS ANGELES IZTAPALAPA', 'CAPA_QTY': 253},
+    {'SHOP NUMBER': '3916', 'SUB REGION': '9F', 'SHOP NAME': 'BA IZTAPALAPA NORTE', 'CAPA_QTY': 249},
+    {'SHOP NUMBER': '3113', 'SUB REGION': '5D', 'SHOP NAME': 'SC NILO LOMAS D L PAJAROS', 'CAPA_QTY': 248},
+    {'SHOP NUMBER': '3851', 'SUB REGION': '9F', 'SHOP NAME': 'SC AEROPUERTO', 'CAPA_QTY': 247},
+    {'SHOP NUMBER': '1202', 'SUB REGION': '9F', 'SHOP NAME': 'SC HORIZONTE', 'CAPA_QTY': 246},
+    {'SHOP NUMBER': '1119', 'SUB REGION': '5A', 'SHOP NAME': 'SC COLON', 'CAPA_QTY': 244},
+    {'SHOP NUMBER': '1423', 'SUB REGION': '9F', 'SHOP NAME': 'SC SANTA ELENA', 'CAPA_QTY': 241},
+    {'SHOP NUMBER': '3753', 'SUB REGION': '9F', 'SHOP NAME': 'BA PLAZA ARAGON', 'CAPA_QTY': 240},
+    {'SHOP NUMBER': '1002', 'SUB REGION': '9F', 'SHOP NAME': 'BA TEOTIHUACAN', 'CAPA_QTY': 227},
+    {'SHOP NUMBER': '3884', 'SUB REGION': '9F', 'SHOP NAME': 'BA CHALCO', 'CAPA_QTY': 224},
+    {'SHOP NUMBER': '3780', 'SUB REGION': '5A', 'SHOP NAME': 'BA ATEMAJAC', 'CAPA_QTY': 221},
+    {'SHOP NUMBER': '3784', 'SUB REGION': '9F', 'SHOP NAME': 'BA 1 DE MAYO', 'CAPA_QTY': 218},
+    {'SHOP NUMBER': '4540', 'SUB REGION': '5D', 'SHOP NAME': 'SC 16 DE SEPTIEMBRE', 'CAPA_QTY': 217},
+    {'SHOP NUMBER': '4109', 'SUB REGION': '9F', 'SHOP NAME': 'SC PUERTA TEXCOCO', 'CAPA_QTY': 215},
+    {'SHOP NUMBER': '1683', 'SUB REGION': '9F', 'SHOP NAME': 'SC VICENTE GUERRERO', 'CAPA_QTY': 212},
+    {'SHOP NUMBER': '1171', 'SUB REGION': '9F', 'SHOP NAME': 'SC SAN JOSE TECAMAC', 'CAPA_QTY': 212},
+    {'SHOP NUMBER': '3761', 'SUB REGION': '9F', 'SHOP NAME': 'BA TULYEHUALCO', 'CAPA_QTY': 207},
+    {'SHOP NUMBER': '3900', 'SUB REGION': '9F', 'SHOP NAME': 'SC COACALCO', 'CAPAimport streamlit as st
+import pandas as pd
+import datetime
+import numpy as np
+import re
+import plotly.express as px
+import io # For Excel Download
+import matplotlib.pyplot as plt # Fix for background_gradient
+
+# --- CAPA 容量資料 (250 筆完整數據 - 保持不變，用於修復店名) ---
 DEFAULT_CAPA_DATA = [
     {'SHOP NUMBER': '2033', 'SUB REGION': '9F', 'SHOP NAME': 'SC PLAZA ORIENTE', 'CAPA_QTY': 429},
     {'SHOP NUMBER': '3861', 'SUB REGION': '5D', 'SHOP NAME': 'SC REVOLUCION', 'CAPA_QTY': 402},
@@ -263,7 +302,7 @@ DEFAULT_CAPA_DATA = [
 
 # --- 1. Configuración de Página y Título ---
 st.set_page_config(
-    page_title="JOSE LAB.", 
+    page_title="JOSE LAB. 2026", 
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -365,11 +404,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. 定義語言包 ---
+# --- 3. 定義語言包 (Updated for 2026) ---
 TRANSLATIONS = {
     'zh': {
-        'title': "Jose Lab.", 
-        'subtitle': "THE LAB bringing clarity and strategy to OPPO’s inventory across Walmart and Bodega.",
+        'title': "Jose Lab. 2026", 
+        'subtitle': "THE LAB bringing clarity and strategy to OPPO’s inventory across Walmart and Bodega for 2026.",
         'sec_settings': "參數設定",
         'sec_financial': "價格表",
         'sec_filters': "全域篩選",
@@ -384,7 +423,7 @@ TRANSLATIONS = {
         'upload_att': "1. 上傳 AT&T (SO+INV)",
         'upload_inv': "2. 上傳 Telcel (INV)",
         'upload_so': "3. 上傳 Telcel (SO)",
-        'upload_prompt': "👋 請上傳 Excel 檔案以開始分析。",
+        'upload_prompt': "👋 請上傳 Excel 檔案以開始分析 (2025/2026 數據皆可)。",
         'loading_data': "數據處理中...",
         'loading_npi': "計算鋪貨邏輯...",
         'week_header': "📅 選擇銷量週次",
@@ -407,12 +446,14 @@ TRANSLATIONS = {
         'tab3': "📈 總部匯總",
         'tab_high_end': "💎 高端機分析",
         'tab4': "🧠 AI 超級診斷",
-        'tab5': "🔮 未來預測",
+        'tab13': "💰 價格帶攻防戰", # NEW
         'tab6': "💰 促銷計算",
         'tab7': "✍️ PO 試算表",
-        'tab8': "📅 2026 預測",
+        'tab8': "📅 2026 戰略總部",
         'tab9': "🏆 S 級門店 (Top 20%)",
         'tab10': "🏭 門店 CAPA 容量", 
+        'tab11': "📅 YoY 對比 (25 vs 26)",
+        'tab12': "🏢 門店排行榜",
         'fin_set_price': "設定 ASP (平均售價)",
         'plan_checklist': "### 🎯 執行清單",
         'check_npi': "確認 NPI 訂單",
@@ -471,7 +512,7 @@ TRANSLATIONS = {
         'heatmap_title': "🗺️ 區域庫存熱力圖 (Inventory Heatmap - Red Alert)",
         'download_report_btn': "📥 下載完整戰略報告 (Excel)",
         'trend_wow_title': "📈 Tendencia Semanal (WoW)",
-        'forecast_title': "🔮 2026 全年銷量預測 (分價位段)",
+        'forecast_title': "🔮 2026 全年戰略目標 (2026 Master Plan)",
         'forecast_growth_label': "2026 目標增長率 (%)",
         'seg_low': "A LOW",
         'seg_mid': "A MEDIUM",
@@ -495,8 +536,8 @@ TRANSLATIONS = {
         'capa_select_none': "不選擇 (None / Default)"
     },
     'es': {
-        'title': "Jose Lab.", 
-        'subtitle': "THE LAB bringing clarity and strategy to OPPO’s inventory across Walmart and Bodega.",
+        'title': "Jose Lab. 2026", 
+        'subtitle': "THE LAB bringing clarity and strategy to OPPO’s inventory across Walmart and Bodega for 2026.",
         'sec_settings': "CONFIGURACIÓN",
         'sec_financial': "PRECIOS",
         'sec_filters': "FILTROS",
@@ -511,7 +552,7 @@ TRANSLATIONS = {
         'upload_att': "1. Cargar AT&T",
         'upload_inv': "2. Cargar Telcel (INV)",
         'upload_so': "3. Cargar Telcel (SO)",
-        'upload_prompt': "Carga los archivos.",
+        'upload_prompt': "Carga los archivos (2025/2026 Compatible).",
         'loading_data': "PROCESANDO...",
         'loading_npi': "CALCULANDO...",
         'week_header': "Semanas de Venta",
@@ -534,12 +575,14 @@ TRANSLATIONS = {
         'tab3': "Resumen HQ",
         'tab_high_end': "Análisis High-End",
         'tab4': "Diagnóstico AI",
-        'tab5': "Predicción",
+        'tab13': "💰 Batalla de Precios",
         'tab6': "Calculadora",
         'tab7': "✍️ Hoja PO",
-        'tab8': "📅 Pronóstico 2026",
+        'tab8': "📅 Master Plan 2026",
         'tab9': "🏆 Tiendas Clase S",
         'tab10': "🏭 CAPA Tienda", 
+        'tab11': "📅 YoY (25 vs 26)",
+        'tab12': "🏢 Ranking Tiendas",
         'fin_set_price': "Configurar ASP",
         'plan_checklist': "### CHECKLIST",
         'check_npi': "Confirmar PO NPI",
@@ -598,7 +641,7 @@ TRANSLATIONS = {
         'heatmap_title': "🗺️ Mapa de Calor de Inventario (Red Alert)",
         'download_report_btn': "📥 Descargar Reporte Completo (Excel)",
         'trend_wow_title': "📈 Tendencia Semanal (WoW)",
-        'forecast_title': "🔮 Pronóstico 2026 (Por Segmento de Precio)",
+        'forecast_title': "🔮 Master Plan 2026 (Por Segmento)",
         'forecast_growth_label': "Crecimiento 2026 (%)",
         'seg_low': "A LOW",
         'seg_mid': "A MEDIUM",
@@ -639,18 +682,21 @@ def t(key, *args):
 
 st.title(t('title'))
 
-# --- MEXICAN HOLIDAY TICKER ---
+# --- MEXICAN HOLIDAY TICKER (2026 UPDATED) ---
+# Update dates for 2026
 holiday_data = [
-    "📅 6 Ene: Día de Reyes (Impact: 1.1x)",
-    "💘 14 Feb: San Valentín (Impact: 1.2x)",
-    "💐 10 May: Día de las Madres (Impact: 1.5x - High)",
-    "🔥 May/Jun: Hot Sale (Impact: 1.8x - Peak)",
-    "👔 15 Jun: Día del Padre (Impact: 1.1x)",
-    "🎒 Ago: Regreso a Clases (Impact: 1.1x)",
-    "🇲🇽 16 Sep: Independencia (Impact: 1.0x)",
-    "💀 Oct/Nov: Día de Muertos (Impact: 1.0x)",
-    "🛍️ 14-17 Nov: El Buen Fin (Impact: 2.5x - MEGA PEAK)",
-    "🎄 Dec: Navidad/Posadas (Impact: 2.0x - High)"
+    "📅 2026 PLAN: Strategic Focus",
+    "👑 6 Ene: Día de Reyes 2026 (Mon)",
+    "💘 14 Feb: San Valentín (Sat)",
+    "🐇 2-5 Apr: Semana Santa (Peak)",
+    "💐 10 May: Madres (Sun)",
+    "🔥 May/Jun: Hot Sale 2026",
+    "👔 21 Jun: Padre (Sun)",
+    "🎒 Aug: Back to School",
+    "🇲🇽 16 Sep: Independencia (Wed)",
+    "💀 2 Nov: Muertos (Mon)",
+    "🛍️ Nov: Buen Fin 2026 (Est. 13-16)",
+    "🎄 Dec: Navidad 2026"
 ]
 ticker_content = "".join([f"<div class='ticker__item'>{h}</div>" for h in holiday_data])
 
@@ -698,14 +744,18 @@ def standardize_columns(df):
     if 'SEMANA' in df.columns:
         df.rename(columns={'SEMANA': 'WEEK'}, inplace=True)
     
-    # 2025-05-20 Update: Improved Date Detection (Aggressive)
+    # 2026 Update: Look for YEAR columns
+    for col in df.columns:
+        if col in ['AÑO', 'ANIO', 'YEAR_ID']:
+            df.rename(columns={col: 'YEAR'}, inplace=True)
+
+    # 2025-05-20 Update: Improved Date Detection
     for col in df.columns:
         col_str = str(col).upper()
         if 'FECHA' in col_str or 'DATE' in col_str or 'DIA' in col_str:
-            # Avoid renaming 'MEDIA' (AVG) to DATE if misread
             if col_str not in ['MEDIA', 'MEDIAN', 'DIAMETER']:
                 df.rename(columns={col: 'DATE'}, inplace=True)
-                break # Only rename the first date-like column found
+                break 
 
     df = df.loc[:, ~df.columns.duplicated()]
     if 'SUB REGION' in df.columns:
@@ -725,54 +775,83 @@ def safe_read_csv(file):
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_all_weeks(files):
-    weeks = set()
+    # 2026 Update: This function now returns a list of strings "Week X (Year Y)" if year is present
+    weeks_set = set()
     for f in files:
         if f is not None:
             try:
                 f.seek(0)
                 if f.name.endswith('xlsx'): 
-                    header = pd.read_excel(f, nrows=1)
-                    week_col = None
-                    for c in header.columns:
-                        c_upper = str(c).upper().strip()
-                        if c_upper == 'WEEK' or c_upper == 'SEMANA' or c_upper == 'WK':
-                            week_col = c
-                            break
-                    if week_col:
-                        temp = pd.read_excel(f, usecols=[week_col])
-                        temp.rename(columns={week_col: 'WEEK'}, inplace=True)
-                    else: temp = pd.DataFrame()
+                    header = pd.read_excel(f, nrows=5) # Read a few rows to find header
+                    # Simple heuristic
+                    week_col = next((c for c in header.columns if str(c).upper().strip() in ['WEEK', 'SEMANA', 'WK']), None)
+                    year_col = next((c for c in header.columns if str(c).upper().strip() in ['YEAR', 'AÑO', 'ANIO']), None)
+                    
+                    cols = []
+                    if week_col: cols.append(week_col)
+                    if year_col: cols.append(year_col)
+                    
+                    if cols:
+                        temp = pd.read_excel(f, usecols=cols)
+                        temp.columns = temp.columns.str.upper().str.strip()
+                        if 'SEMANA' in temp.columns: temp.rename(columns={'SEMANA': 'WEEK'}, inplace=True)
+                        if 'AÑO' in temp.columns: temp.rename(columns={'AÑO': 'YEAR'}, inplace=True)
+                        if 'ANIO' in temp.columns: temp.rename(columns={'ANIO': 'YEAR'}, inplace=True)
+                    else:
+                        temp = pd.DataFrame()
                 else: 
                     temp = safe_read_csv(f)
-                    temp.columns = temp.columns.str.upper()
-                    if 'SEMANA' in temp.columns: temp.rename(columns={'SEMANA': 'WEEK'}, inplace=True)
-                    if 'WEEK' in temp.columns: temp = temp[['WEEK']]
+                    temp = standardize_columns(temp)
                 
                 if 'WEEK' in temp.columns:
-                    w_list = temp['WEEK'].dropna().apply(clean_week_format).unique()
-                    weeks.update(w_list)
+                    temp['WEEK'] = temp['WEEK'].dropna().apply(clean_week_format)
+                    if 'YEAR' in temp.columns:
+                        temp['Label'] = temp['WEEK'].astype(str) + " (" + temp['YEAR'].astype(str) + ")"
+                        # Store composite key for sorting
+                        # But return Label for UI
+                        weeks_set.update(temp['Label'].unique())
+                    else:
+                        weeks_set.update(temp['WEEK'].unique())
                 f.seek(0)
             except: pass
-    try: return sorted(list(weeks), key=lambda x: int(x), reverse=True)
-    except: return sorted(list(weeks), reverse=True)
+            
+    # Sort logic
+    def sort_key(w_str):
+        # Format: "52 (2025)" or "1"
+        try:
+            if "(" in w_str:
+                parts = w_str.replace(")", "").split("(")
+                wk = int(parts[0])
+                yr = int(parts[1])
+                return yr * 100 + wk
+            else:
+                return 202500 + int(w_str) # Default to 2025 if no year
+        except: return 0
+
+    return sorted(list(weeks_set), key=sort_key, reverse=True)
 
 def get_latest_week(df):
     if 'WEEK' not in df.columns: return None
     try:
-        weeks = pd.to_numeric(df['WEEK'], errors='coerce').dropna()
-        if not weeks.empty:
-            return str(int(weeks.max()))
-        return df['WEEK'].max()
+        df['W_Num'] = pd.to_numeric(df['WEEK'], errors='coerce')
+        if 'YEAR' in df.columns:
+            df['Y_Num'] = pd.to_numeric(df['YEAR'], errors='coerce').fillna(2025)
+            df['Sort_Key'] = df['Y_Num'] * 100 + df['W_Num']
+            max_key = df['Sort_Key'].max()
+            # Extract week back from key
+            return str(int(max_key % 100))
+        else:
+            return str(int(df['W_Num'].max()))
     except: return df['WEEK'].max()
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def process_att(file, selected_weeks):
+def process_att(file, selected_weeks_labels):
     try: df = pd.read_excel(file)
     except: df = safe_read_csv(file)
     df = standardize_columns(df)
     
     # Force B column (index 1) to be SHOP NUMBER if exists
-    if len(df.columns) > 1:
+    if len(df.columns) > 1 and 'SHOP NUMBER' not in df.columns:
         df['SHOP NUMBER'] = df.iloc[:, 1].astype(str).str.strip()
     
     if 'SHOP NUMBER' in df.columns:
@@ -787,6 +866,17 @@ def process_att(file, selected_weeks):
     df['SHOP SO'] = pd.to_numeric(df['SHOP SO'], errors='coerce').fillna(0)
     df['SHOP INV'] = pd.to_numeric(df['SHOP INV'], errors='coerce').fillna(0)
     
+    # Year Handling
+    if 'YEAR' not in df.columns: df['YEAR'] = 2025 # Default
+    
+    # Construct Filter Key
+    df['Week_Label'] = df['WEEK'].astype(str)
+    # Check if selected labels have Year info
+    has_year_in_selection = any("(" in str(x) for x in selected_weeks_labels)
+    
+    if has_year_in_selection:
+        df['Week_Label'] = df['WEEK'].astype(str) + " (" + df['YEAR'].astype(str) + ")"
+    
     if 'PROMOTOR' not in df.columns: df['PROMOTOR'] = 'No'
     def check_promotor(val):
         s = str(val).lower().strip()
@@ -797,45 +887,33 @@ def process_att(file, selected_weeks):
     if 'TIPO' not in df.columns: df['TIPO'] = 'Regular'
     else: df['TIPO'] = df['TIPO'].astype(str).str.strip().str.upper()
 
-    # =========== ⬇️ 新增這段修正代碼 (FIX START) ⬇️ ===========
-    # 邏輯：根據該門店在 Excel 裡「最新一週」的區域，來更新它的歷史區域。
-    # 這樣未來你改成 9G 或其他名字，程式都會自動抓最新的名字去覆蓋舊歷史，圖表就不會斷掉。
-    
-    # 1. 確保週次是數字以便排序
+    # Region Fix
     df['Temp_Week_Num'] = pd.to_numeric(df['WEEK'], errors='coerce')
-    
-    # 2. 依照週次由新到舊排序，這樣 drop_duplicates 會保留最新的那個區域
-    df_sorted = df.sort_values('Temp_Week_Num', ascending=False)
-    
-    # 3. 建立 {門店: 最新區域} 的對照表
+    df_sorted = df.sort_values(['YEAR', 'Temp_Week_Num'], ascending=[False, False])
     latest_region_map = df_sorted.drop_duplicates('SHOP NUMBER').set_index('SHOP NUMBER')['REGION'].to_dict()
-    
-    # 4. 將這個最新區域應用到該門店的所有歷史數據
     df['REGION'] = df['SHOP NUMBER'].map(latest_region_map).fillna(df['REGION'])
-    
-    # 5. 刪除暫存欄位
     df.drop(columns=['Temp_Week_Num'], inplace=True)
-    # =========== ⬆️ 新增這段修正代碼 (FIX END) ⬆️ ===========
-
-    # Granular Trend (這是原本的第 400 行左右)
-    trend_att = df.groupby(['WEEK', 'MODELO OPPO', 'REGION', 'SHOP NAME', 'SHOP NUMBER', 'Has_Promotor', 'TIPO'])[['SHOP SO', 'SHOP INV']].sum().reset_index()
-# ... (原本的代碼) ...
 
     # Granular Trend
-    trend_att = df.groupby(['WEEK', 'MODELO OPPO', 'REGION', 'SHOP NAME', 'SHOP NUMBER', 'Has_Promotor', 'TIPO'])[['SHOP SO', 'SHOP INV']].sum().reset_index()
+    trend_att = df.groupby(['YEAR', 'WEEK', 'MODELO OPPO', 'REGION', 'SHOP NAME', 'SHOP NUMBER', 'Has_Promotor', 'TIPO'])[['SHOP SO', 'SHOP INV']].sum().reset_index()
     trend_att['Channel'] = 'AT&T'
     trend_att.rename(columns={'REGION': 'SUB REGION'}, inplace=True)
 
-    latest_week = get_latest_week(df)
-    df_stock = df[df['WEEK'] == latest_week].groupby(['MODELO OPPO', 'SHOP NAME', 'SHOP NUMBER', 'REGION', 'Has_Promotor', 'TIPO'])['SHOP INV'].sum().reset_index()
+    # Stock (Latest)
+    # Logic: Sort by Year Desc, Week Desc, take top 1
+    df['Y_Int'] = pd.to_numeric(df['YEAR'], errors='coerce').fillna(2025)
+    df['W_Int'] = pd.to_numeric(df['WEEK'], errors='coerce')
+    df['Sort_Key'] = df['Y_Int'] * 100 + df['W_Int']
+    max_key = df['Sort_Key'].max()
     
-    df_sales_filtered = df[df['WEEK'].isin(selected_weeks)].copy()
+    df_stock = df[df['Sort_Key'] == max_key].groupby(['MODELO OPPO', 'SHOP NAME', 'SHOP NUMBER', 'REGION', 'Has_Promotor', 'TIPO'])['SHOP INV'].sum().reset_index()
     
-    # 2025-05-20 Update: Keep DATE if exists
-    cols_to_keep = ['WEEK', 'REGION', 'MODELO OPPO', 'SHOP SO']
+    # Sales Filter
+    df_sales_filtered = df[df['Week_Label'].isin(selected_weeks_labels)].copy()
+    
+    cols_to_keep = ['WEEK', 'YEAR', 'REGION', 'MODELO OPPO', 'SHOP SO']
     if 'DATE' in df_sales_filtered.columns:
         cols_to_keep.append('DATE')
-        # Ensure DATE is datetime
         df_sales_filtered['DATE'] = pd.to_datetime(df_sales_filtered['DATE'], errors='coerce').dt.date
 
     raw_sales_data = df_sales_filtered[cols_to_keep].copy()
@@ -843,7 +921,7 @@ def process_att(file, selected_weeks):
     raw_sales_data['SHOP NAME'] = df_sales_filtered['SHOP NAME']
     raw_sales_data['SHOP NUMBER'] = df_sales_filtered['SHOP NUMBER']
 
-    divisor = len(selected_weeks) if len(selected_weeks) > 0 else 1
+    divisor = len(selected_weeks_labels) if len(selected_weeks_labels) > 0 else 1
     df_sales_avg = df_sales_filtered.groupby(['MODELO OPPO', 'SHOP NAME', 'SHOP NUMBER'])['SHOP SO'].sum().reset_index()
     df_sales_avg['Avg_Weekly_Sales'] = df_sales_avg['SHOP SO'] / divisor
     
@@ -859,7 +937,8 @@ def smart_rename_telcel(df):
         'SHOP NAME': ['TIENDA', 'NOMBRE', 'DESC TIENDA', 'STORE_NAME', 'NOMBRE_TIENDA', 'DEALER'],
         'SHOP INV': ['INVENTARIO', 'ON HAND', 'STOCK', 'INV', 'OH', 'SOH', 'AVAILABLE'],
         'REGION': ['RGN', 'REGION', 'ZONE', 'ZONA'],
-        'MODELO OPPO': ['MATERIAL', 'MODELO', 'SKU', 'PRODUCTO']
+        'MODELO OPPO': ['MATERIAL', 'MODELO', 'SKU', 'PRODUCTO'],
+        'YEAR': ['AÑO', 'ANIO', 'YEAR_ID']
     }
     for standard_col, variations in mapping.items():
         if standard_col in df.columns: continue 
@@ -867,7 +946,6 @@ def smart_rename_telcel(df):
             if var in df.columns:
                 df.rename(columns={var: standard_col}, inplace=True)
                 break
-            # Fuzzy match for Spanish headers
             for col in df.columns:
                 if var in str(col).upper():
                     df.rename(columns={col: standard_col}, inplace=True)
@@ -876,7 +954,7 @@ def smart_rename_telcel(df):
     return df
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def process_telcel(file_inv, file_so, selected_weeks):
+def process_telcel(file_inv, file_so, selected_weeks_labels):
     if file_inv.name.endswith('xlsx'): df_inv = pd.read_excel(file_inv)
     else: df_inv = safe_read_csv(file_inv)
     if file_so.name.endswith('xlsx'): df_so = pd.read_excel(file_so)
@@ -892,7 +970,11 @@ def process_telcel(file_inv, file_so, selected_weeks):
     df_inv = normalize_model_names(df_inv)
     df_so = normalize_model_names(df_so)
     
-    # 2. Force Shop Number to String (remove decimals .0)
+    # Year Default
+    if 'YEAR' not in df_inv.columns: df_inv['YEAR'] = 2025
+    if 'YEAR' not in df_so.columns: df_so['YEAR'] = 2025
+    
+    # 2. Force Shop Number
     def clean_shop_id(val):
         s = str(val).strip()
         if s.endswith('.0'): return s[:-2]
@@ -914,21 +996,25 @@ def process_telcel(file_inv, file_so, selected_weeks):
     df_inv['SHOP INV'] = pd.to_numeric(df_inv['SHOP INV'], errors='coerce').fillna(0)
     df_so['SHOP SO'] = pd.to_numeric(df_so['SHOP SO'], errors='coerce').fillna(0)
 
-    # 3. Define Raw Sales Data (Fixing NameError)
+    # 3. Define Raw Sales Data
     shop_region_map = pd.DataFrame()
     if 'REGION' in df_inv.columns:
         shop_region_map = df_inv[['SHOP NUMBER', 'REGION']].drop_duplicates(subset=['SHOP NUMBER'])
     
-    df_so_filtered = df_so[df_so['WEEK'].isin(selected_weeks)].copy()
+    # Filter Logic
+    df_so['Week_Label'] = df_so['WEEK'].astype(str)
+    has_year = any("(" in str(x) for x in selected_weeks_labels)
+    if has_year:
+        df_so['Week_Label'] = df_so['WEEK'].astype(str) + " (" + df_so['YEAR'].astype(str) + ")"
+
+    df_so_filtered = df_so[df_so['Week_Label'].isin(selected_weeks_labels)].copy()
     
-    # 2025-05-20 Update: Keep DATE if exists
-    cols_to_keep = ['WEEK', 'REGION', 'MODELO OPPO', 'SHOP SO', 'SHOP NUMBER']
+    cols_to_keep = ['WEEK', 'YEAR', 'REGION', 'MODELO OPPO', 'SHOP SO', 'SHOP NUMBER']
     if 'DATE' in df_so_filtered.columns:
         cols_to_keep.append('DATE')
-        # Ensure DATE is datetime
         df_so_filtered['DATE'] = pd.to_datetime(df_so_filtered['DATE'], errors='coerce').dt.date
 
-    # Create raw_sales_data for export/trends
+    # Create raw_sales_data
     df_so_with_region = pd.merge(df_so_filtered, shop_region_map, on='SHOP NUMBER', how='left')
     if 'REGION' not in df_so_with_region.columns:
         df_so_with_region['REGION'] = 'Unknown'
@@ -938,15 +1024,14 @@ def process_telcel(file_inv, file_so, selected_weeks):
     raw_sales_data = df_so_with_region[[c for c in cols_to_keep if c in df_so_with_region.columns]].copy()
     raw_sales_data['Channel'] = 'Telcel'
     if 'SHOP NAME' in df_so.columns:
-          # Try to map names if possible
           raw_sales_data['SHOP NAME'] = df_so_filtered['SHOP NAME']
     else:
           raw_sales_data['SHOP NAME'] = raw_sales_data['SHOP NUMBER']
           
     # 4. Granular Trend
-    t_inv = df_inv.groupby(['WEEK', 'SHOP NUMBER', 'MODELO OPPO'])['SHOP INV'].sum().reset_index()
-    t_so = df_so.groupby(['WEEK', 'SHOP NUMBER', 'MODELO OPPO'])['SHOP SO'].sum().reset_index()
-    trend_telcel = pd.merge(t_so, t_inv, on=['WEEK', 'SHOP NUMBER', 'MODELO OPPO'], how='outer').fillna(0)
+    t_inv = df_inv.groupby(['YEAR', 'WEEK', 'SHOP NUMBER', 'MODELO OPPO'])['SHOP INV'].sum().reset_index()
+    t_so = df_so.groupby(['YEAR', 'WEEK', 'SHOP NUMBER', 'MODELO OPPO'])['SHOP SO'].sum().reset_index()
+    trend_telcel = pd.merge(t_so, t_inv, on=['YEAR', 'WEEK', 'SHOP NUMBER', 'MODELO OPPO'], how='outer').fillna(0)
     
     trend_telcel = pd.merge(trend_telcel, shop_region_map, on='SHOP NUMBER', how='left')
     trend_telcel['REGION'] = trend_telcel['REGION'].fillna('Unknown')
@@ -972,15 +1057,19 @@ def process_telcel(file_inv, file_so, selected_weeks):
     else: df_inv['TIPO'] = df_inv['TIPO'].astype(str).str.strip().str.upper()
     if 'REGION' not in df_inv.columns: df_inv['REGION'] = 'Unknown'
 
-    latest_week = get_latest_week(df_inv)
+    # Get Latest Week based on Year + Week
+    df_inv['Y_Int'] = pd.to_numeric(df_inv['YEAR'], errors='coerce').fillna(2025)
+    df_inv['W_Int'] = pd.to_numeric(df_inv['WEEK'], errors='coerce')
+    df_inv['Sort_Key'] = df_inv['Y_Int'] * 100 + df_inv['W_Int']
+    max_key = df_inv['Sort_Key'].max()
     
     inv_cols = ['MODELO OPPO', 'SHOP NUMBER', 'Has_Promotor', 'TIPO']
     if 'SHOP NAME' in df_inv.columns: inv_cols.append('SHOP NAME')
     if 'REGION' in df_inv.columns: inv_cols.append('REGION')
     
-    inv_grouped = df_inv[df_inv['WEEK'] == latest_week].groupby(inv_cols)['SHOP INV'].sum().reset_index()
+    inv_grouped = df_inv[df_inv['Sort_Key'] == max_key].groupby(inv_cols)['SHOP INV'].sum().reset_index()
     
-    divisor = len(selected_weeks) if len(selected_weeks) > 0 else 1
+    divisor = len(selected_weeks_labels) if len(selected_weeks_labels) > 0 else 1
     so_grouped = df_so_filtered.groupby(['MODELO OPPO', 'SHOP NUMBER'])['SHOP SO'].sum().reset_index()
     so_grouped['Avg_Weekly_Sales'] = so_grouped['SHOP SO'] / divisor
 
@@ -988,7 +1077,7 @@ def process_telcel(file_inv, file_so, selected_weeks):
     merged = pd.merge(inv_grouped, so_grouped[['MODELO OPPO', 'SHOP NUMBER', 'Avg_Weekly_Sales']], on=['SHOP NUMBER', 'MODELO OPPO'], how='outer')
     merged['Channel'] = 'Telcel'
     
-    # Recover missing info (Region/Name) after outer join
+    # Recover missing info
     merged = pd.merge(merged, shop_region_map, on='SHOP NUMBER', how='left', suffixes=('', '_map'))
     if 'REGION' in merged.columns:
         merged['REGION'] = merged['REGION'].fillna(merged['REGION_map']).fillna('Unknown')
@@ -1095,10 +1184,37 @@ if file_att and file_telcel_inv and file_telcel_so:
             df_all.rename(columns={'REGION': 'SUB REGION'}, inplace=True)
             df_all = df_all.loc[:, ~df_all.columns.duplicated()]
             
+            # === START OF SHOP NAME FIX (GLOBAL) ===
+            # 1. Create Master Map from CAPA (Cleanest Source)
+            capa_ref = pd.DataFrame(DEFAULT_CAPA_DATA)
+            master_name_map = dict(zip(capa_ref['SHOP NUMBER'].astype(str).str.strip(), capa_ref['SHOP NAME']))
+            
+            # 2. Augment with Uploaded Data (If Name exists)
+            current_names = df_all[['SHOP NUMBER', 'SHOP NAME']].dropna().drop_duplicates(subset=['SHOP NUMBER'])
+            current_names['SHOP NUMBER'] = current_names['SHOP NUMBER'].astype(str).str.strip()
+            
+            for idx, row in current_names.iterrows():
+                s_id = row['SHOP NUMBER']
+                s_name = str(row['SHOP NAME'])
+                # Only use if not already in master map and looks like a real name (not "Store 123")
+                if s_id not in master_name_map:
+                    if "STORE" not in s_name.upper() and s_id != s_name:
+                        master_name_map[s_id] = s_name
+            
+            # 3. Apply Map to df_all
+            df_all['SHOP NUMBER'] = df_all['SHOP NUMBER'].astype(str).str.strip()
+            # If map has it, use it. If not, fallback to existing name.
+            df_all['SHOP NAME'] = df_all['SHOP NUMBER'].map(master_name_map).fillna(df_all['SHOP NAME'])
+            # === END OF SHOP NAME FIX ===
+
             # --- UPDATED: Merge Granular Trends for Session State ---
             all_trends_granular = pd.concat([trend_att, trend_telcel], ignore_index=True)
-            all_trends_granular['WEEK_NUM'] = pd.to_numeric(all_trends_granular['WEEK'], errors='coerce')
-            all_trends_granular = all_trends_granular.sort_values('WEEK_NUM')
+            # Create Sorting Key 202601 > 202552
+            all_trends_granular['Y_Int'] = pd.to_numeric(all_trends_granular['YEAR'], errors='coerce').fillna(2025)
+            all_trends_granular['W_Int'] = pd.to_numeric(all_trends_granular['WEEK'], errors='coerce')
+            all_trends_granular['Sort_Key'] = all_trends_granular['Y_Int'] * 100 + all_trends_granular['W_Int']
+            
+            all_trends_granular = all_trends_granular.sort_values('Sort_Key')
             # --------------------------------------------------------
 
             st.session_state.processed_data = df_all
@@ -1323,7 +1439,28 @@ if file_att and file_telcel_inv and file_telcel_so:
     c2.metric("R9", f"{int(df_r9['Suggested_PO_Qty'].sum()):,}")
 
     st.sidebar.markdown("---")
-    with st.sidebar.expander(t('po_breakdown'), expanded=True):
+    # Move Download Button to Sidebar
+    with st.sidebar.expander("📥 導出報告 (Export)", expanded=True):
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df_calc.to_excel(writer, sheet_name='Full_Data', index=False)
+            
+            model_stats = df_calc.groupby('MODELO OPPO').agg({'SHOP INV': 'sum', 'Predicted_Sales': 'sum', 'ASP': 'max'}).reset_index()
+            model_stats['WOS'] = np.where(model_stats['Predicted_Sales'] > 0, model_stats['SHOP INV'] / model_stats['Predicted_Sales'], 999)
+            risks = model_stats[(model_stats['SHOP INV'] - (model_stats['Predicted_Sales'] * 4) < 0) & (model_stats['Predicted_Sales'] > 10) & (model_stats['WOS'] < 4)]
+            risks.to_excel(writer, sheet_name='Urgent_Restock', index=False)
+            
+            zombies = df_calc[(df_calc['SHOP INV'] >= 5) & (df_calc['Predicted_Sales'] == 0)]
+            zombies.to_excel(writer, sheet_name='Zombie_List', index=False)
+            
+        st.download_button(
+            label=t('download_report_btn'),
+            data=output.getvalue(),
+            file_name=f"KAM_Report_{datetime.date.today()}.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+    with st.sidebar.expander(t('po_breakdown'), expanded=False):
         tab_deur, tab_r9 = st.tabs(["Deur", "R9"])
         with tab_deur:
             po_deur = df_deur.groupby('MODELO OPPO')['Suggested_PO_Qty'].sum().reset_index()
@@ -1335,7 +1472,12 @@ if file_att and file_telcel_inv and file_telcel_so:
             st.dataframe(po_r9.style.format({'Suggested_PO_Qty': '{:,.0f}'}), hide_index=True, use_container_width=True)
 
     # --- Tabs ---
-    tabs = st.tabs([t('tab1'), t('tab2'), t('tab3'), t('tab_high_end'), t('tab4'), t('tab5'), t('tab6'), t('tab7'), t('tab8'), t('tab9'), t('tab10')]) # New Tab 10
+    tabs = st.tabs([
+        t('tab1'), t('tab2'), t('tab3'), t('tab_high_end'), t('tab4'), 
+        t('tab13'), # NEW Recommendation
+        t('tab6'), t('tab7'), t('tab8'), t('tab9'), t('tab10'),
+        t('tab11'), t('tab12') # Note: Tab 5 removed
+    ])
 
     with tabs[0]: # Detail (WoW Added)
         st.subheader(t('tab1'))
@@ -1442,22 +1584,32 @@ if file_att and file_telcel_inv and file_telcel_so:
             # 1. Get the granular trend data
             trend_filtered = st.session_state.all_trends_granular.copy()
             
-            # 2. Apply Global Filters (Same logic as df_calc)
+            # --- 關鍵修正：增加「顯示全部歷史機型」開關 (Tab 3) ---
+            c_check_t3, _ = st.columns([1, 2])
+            ignore_model_filter_t3 = c_check_t3.checkbox("✅ 顯示所有歷史機型 (忽略機型篩選以還原完整趨勢)", value=True, key="ignore_model_t3")
+
+            # 2. Apply Global Filters (Keep Shop/Region/Channel)
             if shop_filter:
                 trend_filtered = trend_filtered[trend_filtered['SHOP NUMBER'].astype(str).isin(shop_filter)]
             if region_filter:
                 trend_filtered = trend_filtered[trend_filtered['SUB REGION'].astype(str).isin(region_filter)]
-            if model_filter:
-                trend_filtered = trend_filtered[trend_filtered['MODELO OPPO'].isin(model_filter)]
             if channel_filter:
                 trend_filtered = trend_filtered[trend_filtered['Channel'].isin(channel_filter)]
             
-            # 3. Aggregate by Week/Channel for Plotting
-            trend_agg = trend_filtered.groupby(['WEEK', 'Channel'])[['SHOP SO', 'SHOP INV']].sum().reset_index()
+            # Apply Model Filter ONLY if checkbox is UNCHECKED
+            if not ignore_model_filter_t3:
+                if model_filter:
+                    trend_filtered = trend_filtered[trend_filtered['MODELO OPPO'].isin(model_filter)]
             
-            # 4. Sort by Week Number for correct X-axis order
-            trend_agg['WEEK_NUM'] = pd.to_numeric(trend_agg['WEEK'], errors='coerce')
-            trend_agg = trend_agg.sort_values('WEEK_NUM')
+            # 3. Aggregate by Week/Channel for Plotting
+            # Note: We group by YEAR + WEEK to ensure 2026 data follows 2025
+            trend_filtered['Display_Week'] = trend_filtered['WEEK'].astype(str) + " (" + trend_filtered['YEAR'].astype(str) + ")"
+            trend_filtered['Sort_Key'] = trend_filtered['YEAR'].astype(int) * 100 + trend_filtered['WEEK'].astype(int)
+            
+            trend_agg = trend_filtered.groupby(['Display_Week', 'Sort_Key', 'Channel'])[['SHOP SO', 'SHOP INV']].sum().reset_index()
+            
+            # 4. Sort by Key
+            trend_agg = trend_agg.sort_values('Sort_Key')
 
             st.markdown("### 📊 總部匯總 (Trends - Filtered)")
             c_trend1, c_trend2 = st.columns(2)
@@ -1466,7 +1618,7 @@ if file_att and file_telcel_inv and file_telcel_so:
             with c_trend1:
                 st.markdown("**銷量趨勢 (Sales)**")
                 if not trend_agg.empty:
-                    fig_so = px.line(trend_agg, x='WEEK', y='SHOP SO', color='Channel', markers=True, 
+                    fig_so = px.line(trend_agg, x='Display_Week', y='SHOP SO', color='Channel', markers=True, 
                                      color_discrete_map={'AT&T': '#003366', 'Telcel': '#87CEEB'}) # Dark Blue / Light Blue
                     st.plotly_chart(fig_so, use_container_width=True)
                 else:
@@ -1476,8 +1628,8 @@ if file_att and file_telcel_inv and file_telcel_so:
             with c_trend2:
                 st.markdown("**庫存趨勢 (Inventory)**")
                 if not trend_agg.empty:
-                    fig_inv = px.line(trend_agg, x='WEEK', y='SHOP INV', color='Channel', markers=True,
-                                     color_discrete_map={'AT&T': '#003366', 'Telcel': '#87CEEB'})
+                    fig_inv = px.line(trend_agg, x='Display_Week', y='SHOP INV', color='Channel', markers=True,
+                                      color_discrete_map={'AT&T': '#003366', 'Telcel': '#87CEEB'})
                     st.plotly_chart(fig_inv, use_container_width=True)
                 else:
                     st.info("No Data for Chart")
@@ -1630,65 +1782,62 @@ if file_att and file_telcel_inv and file_telcel_so:
                 loss_by_model = npi_df.groupby('MODELO OPPO')['Loss_Val'].sum().sort_values(ascending=False)
                 st.bar_chart(loss_by_model, color='#000000')
 
-    with tabs[5]: # Future & Strategy (V34.0 Download Button) (Unchanged logic)
-        st.subheader(t('tab5'))
+    # --- NEW: TAB 13 (Recommendation 2: Price Segment Battle) ---
+    with tabs[5]: 
+        st.subheader(t('tab13'))
         
-        # V34.0 Feature: Download Report Button
-        st.markdown(f"### {t('download_report_btn')}")
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine='openpyxl') as writer:
-            df_calc.to_excel(writer, sheet_name='Full_Data', index=False)
+        if not df_calc.empty:
+            # 1. Define Segments based on ASP
+            def get_price_seg(price):
+                if price <= 4500: return "Low (Entry)"
+                if price <= 8000: return "Mid (Core)"
+                return "High (Reno)"
             
-            model_stats = df_calc.groupby('MODELO OPPO').agg({'SHOP INV': 'sum', 'Predicted_Sales': 'sum', 'ASP': 'max'}).reset_index()
-            model_stats['WOS'] = np.where(model_stats['Predicted_Sales'] > 0, model_stats['SHOP INV'] / model_stats['Predicted_Sales'], 999)
-            risks = model_stats[(model_stats['SHOP INV'] - (model_stats['Predicted_Sales'] * 4) < 0) & (model_stats['Predicted_Sales'] > 10) & (model_stats['WOS'] < 4)]
-            risks.to_excel(writer, sheet_name='Urgent_Restock', index=False)
+            df_calc['Price_Seg'] = df_calc['ASP'].apply(get_price_seg)
             
-            zombies = df_calc[(df_calc['SHOP INV'] >= 5) & (df_calc['Predicted_Sales'] == 0)]
-            zombies.to_excel(writer, sheet_name='Zombie_List', index=False)
+            # 2. Aggregate by Region
+            seg_analysis = df_calc.groupby(['SUB REGION', 'Price_Seg']).agg({
+                'Predicted_Sales': 'sum',
+                'SHOP INV': 'sum'
+            }).reset_index()
             
-        st.download_button(
-            label=t('download_report_btn'),
-            data=output.getvalue(),
-            file_name=f"KAM_Report_{datetime.date.today()}.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-
-        st.divider()
-        
-        # AI Promo Advisor
-        st.markdown(f"### {t('promo_ai_advisor_title')}")
-        heavy_stock_models = df_calc.groupby('MODELO OPPO')['SHOP INV'].sum()
-        heavy_stock_list = heavy_stock_models[heavy_stock_models > 100].index.tolist()
-        target_models = list(set(final_npi_list + heavy_stock_list))
-        target_models.sort(key=lambda x: heavy_stock_models.get(x, 0), reverse=True)
-
-        st.info(f"🤖 Analyzing {len(target_models)} models")
-
-        for model in target_models:
-            model_data = df_calc[df_calc['MODELO OPPO'] == model]
-            total_inv = model_data['SHOP INV'].sum()
-            total_sales = model_data['Predicted_Sales'].sum()
-            wos = total_inv / total_sales if total_sales > 0 else 999
+            # 3. Visualizations
+            c1, c2 = st.columns(2)
             
-            with st.expander(f"🔎 **{model}** - Stock: {int(total_inv)} - WOS: {int(wos)}"):
-                if total_sales == 0 and total_inv > 0:
-                    st.error(t('promo_ai_zombie', total_inv))
-                    st.markdown(t('promo_act_bundle'))
-                elif wos > 30:
-                    st.error(t('promo_ai_critical', int(wos)))
-                    st.markdown(t('promo_act_clearance'))
-                elif wos > 12:
-                    st.warning(t('promo_ai_slow', int(wos))) 
-                    st.markdown(t('promo_act_stimulate'))
-                elif wos < 8:
-                    st.error(t('promo_ai_oos', int(wos)))
-                    st.markdown(t('promo_act_hold'))
-                else:
-                    st.success(t('promo_ai_healthy', int(wos)))
-                    st.markdown("✅ **Action: Maintain**")
+            with c1:
+                st.markdown("#### 💳 區域銷售結構 (Sales Mix by Region)")
+                fig_seg_sales = px.bar(
+                    seg_analysis, 
+                    x="SUB REGION", 
+                    y="Predicted_Sales", 
+                    color="Price_Seg", 
+                    title="Sales Volume by Segment",
+                    color_discrete_map={"Low (Entry)": "#D3D3D3", "Mid (Core)": "#808080", "High (Reno)": "#000000"}
+                )
+                st.plotly_chart(fig_seg_sales, use_container_width=True)
+                
+            with c2:
+                st.markdown("#### 📦 區域庫存結構 (Inventory Mix by Region)")
+                fig_seg_inv = px.bar(
+                    seg_analysis, 
+                    x="SUB REGION", 
+                    y="SHOP INV", 
+                    color="Price_Seg", 
+                    title="Inventory Volume by Segment",
+                    color_discrete_map={"Low (Entry)": "#D3D3D3", "Mid (Core)": "#808080", "High (Reno)": "#000000"}
+                )
+                st.plotly_chart(fig_seg_inv, use_container_width=True)
+                
+            # 4. Table View
+            st.divider()
+            st.markdown("#### 📊 詳細數據矩陣")
+            pivot_seg = seg_analysis.pivot(index='SUB REGION', columns='Price_Seg', values='Predicted_Sales').fillna(0)
+            st.dataframe(pivot_seg.style.format("{:,.0f}").background_gradient(cmap="Greys"), use_container_width=True)
+            
+        else:
+            st.info("No data available for price segment analysis.")
 
-    with tabs[6]: # Promo (Unchanged logic)
+    with tabs[6]: # Promo (Unchanged logic) - Renamed from 6
         st.subheader(t('promo_title'))
         c1, c2 = st.columns(2)
         promo_start = c1.date_input("Start", datetime.date.today())
@@ -1713,7 +1862,7 @@ if file_att and file_telcel_inv and file_telcel_so:
                 breakdown_df = edited_df[['MODELO OPPO', 'Original_Price', 'Promo_Depth_%', 'Promo_Price', 'Forecast_SO', 'Total_Spending']].copy()
                 st.dataframe(breakdown_df.style.format({'Original_Price': '$ {:,.0f}', 'Promo_Depth_%': '{:.0f}%', 'Promo_Price': '$ {:,.0f}', 'Forecast_SO': '{:,.0f}', 'Total_Spending': '$ {:,.0f}'}), use_container_width=True, column_config={"Promo_Price": t('promo_col_promo_price'), "Forecast_SO": t('promo_col_forecast'), "Total_Spending": t('promo_col_spending')})
 
-    with tabs[7]: # PO Worksheet (Unchanged logic)
+    with tabs[7]: # PO Worksheet (Unchanged logic) - Renamed from 7
         st.subheader(t('po_manual_title'))
         if 'po_worksheet_data' not in st.session_state:
             models_for_po = ["A5", "A5 pro 4G", "A5 pro 5G", "Reno 14 F", "A6x", "A6 pro 5G", "FIND X9 PRO"]
@@ -1737,7 +1886,7 @@ if file_att and file_telcel_inv and file_telcel_so:
         st.markdown("#### 📊 計算結果 (Calculated View)")
         st.dataframe(display_df.style.format("{:,}", subset=["Telcel DEUR", "ATT", "TOTAL"]), use_container_width=True, column_config={"TOTAL": t('po_manual_col_total')})
 
-    with tabs[8]: # NEW: TAB 8 (2026 Forecast with Editable Seasonality) (Unchanged logic)
+    with tabs[8]: # NEW: TAB 8 (2026 Forecast with Editable Seasonality) (Unchanged logic) - Renamed from 8
         st.subheader(t('forecast_title'))
         
         c_set1, c_set2 = st.columns([1, 2])
@@ -1756,6 +1905,7 @@ if file_att and file_telcel_inv and file_telcel_so:
             if channel_filter: forecast_base = forecast_base[forecast_base['Channel'].isin(channel_filter)]
             
             # Calculate Base (Current Average)
+            # 2026 Update: Use the sorted trends to get recent weeks count
             weeks_count = forecast_base['WEEK'].astype(str).nunique()
             if weeks_count == 0: weeks_count = 1
             current_weekly_volume = forecast_base['SHOP SO'].sum() / weeks_count
@@ -1789,10 +1939,10 @@ if file_att and file_telcel_inv and file_telcel_so:
             # Segment Distribution Logic (UPDATED V36.0)
             def get_forecast_tier(price):
                 if price < 3000: return "Unknown"
-                if price <= 4499: return t('seg_low')      # A LOW
-                if price <= 5999: return t('seg_mid')      # A MEDIUM
+                if price <= 4499: return t('seg_low')       # A LOW
+                if price <= 5999: return t('seg_mid')       # A MEDIUM
                 if price <= 7999: return t('seg_mid_high') # A HIGH
-                return t('seg_high')                       # RENO + FIND
+                return t('seg_high')                        # RENO + FIND
 
             forecast_base['ASP'] = forecast_base['MODELO OPPO'].map(price_map).fillna(0)
             forecast_base['Price_Segment'] = forecast_base['ASP'].apply(get_forecast_tier)
@@ -1883,7 +2033,7 @@ if file_att and file_telcel_inv and file_telcel_so:
         else:
             st.info("請先上傳檔案以產生預測 (Please upload files).")
 
-    with tabs[9]: # NEW: TAB 9 (S-Class Stores Analysis with SHOP NUMBER Fix) (Unchanged logic)
+    with tabs[9]: # NEW: TAB 9 (S-Class Stores Analysis with SHOP NUMBER Fix) (Unchanged logic) - Renamed from 9
         st.subheader(t('s_class_title'))
         
         if not df_calc.empty:
@@ -1955,19 +2105,18 @@ if file_att and file_telcel_inv and file_telcel_so:
             if 'all_trends_granular' in st.session_state:
                 s_ids = s_class['SHOP NUMBER'].tolist()
                 s_history = st.session_state.all_trends_granular[st.session_state.all_trends_granular['SHOP NUMBER'].isin(s_ids)]
-                s_history_agg = s_history.groupby('WEEK')['SHOP SO'].sum().reset_index()
-                s_history_agg['WEEK_NUM'] = pd.to_numeric(s_history_agg['WEEK'])
-                s_history_agg = s_history_agg.sort_values('WEEK_NUM')
+                # Use Sort Key here too
+                s_history_agg = s_history.groupby('Sort_Key')['SHOP SO'].sum().reset_index()
                 
                 st.markdown("#### 📈 S 級門店總銷量趨勢 (S-Class Trend)")
-                fig_s = px.line(s_history_agg, x='WEEK', y='SHOP SO', markers=True, title="Total Weekly Sales of Top 20% Stores")
+                fig_s = px.line(s_history_agg, x='Sort_Key', y='SHOP SO', markers=True, title="Total Weekly Sales of Top 20% Stores")
                 st.plotly_chart(fig_s, use_container_width=True)
 
         else:
             st.info("No data to calculate S-Class stores.")
 
     # --- NEW: TAB 10 (Independent CAPA Analysis) ---
-    with tabs[10]:
+    with tabs[10]: # Renamed from 10
         st.subheader(t('capa_title_main'))
         
         # --- 1. Seasonality Config Section ---
@@ -2009,12 +2158,6 @@ if file_att and file_telcel_inv and file_telcel_so:
         
         if not df_capa_tool.empty:
             # Calculation: Adjusted CAPA = Original CAPA * Factor
-            # Meaning: In peak season (factor > 1), effective capacity might need to be higher, or we simulate higher stock load?
-            # User requirement: "Use preset CAPA to multiply/divide... then show variation below"
-            # Interpretation: 
-            # If factor = 1.2 (May), Adjusted CAPA = 100 * 1.2 = 120.
-            # This shows "Projected Capacity Need" or "Projected Load"?
-            # Let's assume Adjusted CAPA = CAPA * Factor.
             
             df_capa_tool['Adjusted_CAPA'] = df_capa_tool['CAPA_QTY'] * applied_factor
             
@@ -2058,5 +2201,137 @@ if file_att and file_telcel_inv and file_telcel_so:
         else:
             st.info("No CAPA data available.")
 
+    # --- NEW: TAB 11 (2025 vs 2026 Comparison - Fixed 2025 INV & History Support) ---
+    with tabs[11]:
+        st.subheader("📅 YoY 對比分析 (2024 vs 2025 vs 2026)")
+        
+        if 'all_trends_granular' in st.session_state and not st.session_state.all_trends_granular.empty:
+            
+            # 準備基礎數據：從原始顆粒度數據開始
+            yoy_base = st.session_state.all_trends_granular.copy()
+            
+            # 店號與區域過濾 (跨年不變，可保留)
+            if shop_filter: yoy_base = yoy_base[yoy_base['SHOP NUMBER'].astype(str).isin(shop_filter)]
+            if region_filter: yoy_base = yoy_base[yoy_base['SUB REGION'].astype(str).isin(region_filter)]
+            
+            # --- 關鍵修正：增加「顯示全部歷史機型」開關 ---
+            # 因為左側側邊欄的篩選器通常只有當前 (2025/2026) 的機型，會導致 2024 的舊機型 (A15, A54等) 被過濾掉
+            c_check, _ = st.columns([1, 2])
+            ignore_model_filter_yoy = c_check.checkbox("✅ 顯示所有歷史機型 (忽略左側機型篩選以還原 2024 真實銷量)", value=True, key="ignore_model_yoy")
+            
+            if ignore_model_filter_yoy:
+                yoy_data = yoy_base # 忽略 model_filter，保留 A15/A54/Reno6L 等舊機
+                st.caption("ℹ️ 目前顯示完整歷史數據。若需查看特定機型 (如 Reno12)，請取消勾選上方選項。")
+            else:
+                if model_filter: 
+                    yoy_data = yoy_base[yoy_base['MODELO OPPO'].isin(model_filter)]
+                else:
+                    yoy_data = yoy_base
+            
+            # Helper to render chart
+            def render_yoy_section(data, suffix, preset_2025_inv=None):
+                if data.empty:
+                    st.info(f"No data for {suffix}")
+                    return
+                
+                # 年度與週次聚合
+                yoy_agg = data.groupby(['YEAR', 'WEEK'])[['SHOP SO', 'SHOP INV']].sum().reset_index()
+                yoy_agg['YEAR'] = yoy_agg['YEAR'].astype(str)
+                yoy_agg['WEEK'] = pd.to_numeric(yoy_agg['WEEK'])
+                yoy_agg = yoy_agg.sort_values('WEEK')
+                
+                c1, c2 = st.columns(2)
+                with c1:
+                    fig_yoy_sales = px.line(
+                        yoy_agg, x='WEEK', y='SHOP SO', color='YEAR', markers=True,
+                        title=f"Sales YoY ({suffix})",
+                        color_discrete_map={'2024': '#D3D3D3', '2025': '#999999', '2026': '#000000'}
+                    )
+                    st.plotly_chart(fig_yoy_sales, use_container_width=True)
+                with c2:
+                    fig_yoy_inv = px.line(
+                        yoy_agg, x='WEEK', y='SHOP INV', color='YEAR', markers=True,
+                        title=f"Inventory YoY ({suffix})",
+                        color_discrete_map={'2024': '#D3D3D3', '2025': '#999999', '2026': '#000000'}
+                    )
+                    st.plotly_chart(fig_yoy_inv, use_container_width=True)
+                
+                # --- Summary Table 與預設 2025 庫存 ---
+                st.caption(f"Summary Table ({suffix})")
+                summary = yoy_agg.groupby('YEAR')[['SHOP SO', 'SHOP INV']].sum().reset_index()
+                
+                # 如果 2025 存在，強制覆蓋為預設值
+                if preset_2025_inv is not None and '2025' in summary['YEAR'].values:
+                    summary.loc[summary['YEAR'] == '2025', 'SHOP INV'] = preset_2025_inv
+                
+                st.dataframe(summary.style.format({'SHOP SO': '{:,.0f}', 'SHOP INV': '{:,.0f}'}), use_container_width=True)
+
+            # 子標籤頁
+            sub_tabs = st.tabs(["🌎 ALL", "🔵 Telcel", "🔵 AT&T"])
+            
+            with sub_tabs[0]: # ALL
+                render_yoy_section(yoy_data, "All Channels", preset_2025_inv=114385)
+                
+            with sub_tabs[1]: # Telcel
+                render_yoy_section(yoy_data[yoy_data['Channel'] == 'Telcel'], "Telcel Only", preset_2025_inv=88732)
+                
+            with sub_tabs[2]: # AT&T
+                render_yoy_section(yoy_data[yoy_data['Channel'] == 'AT&T'], "AT&T Only", preset_2025_inv=25653)
+            
+        else:
+            st.info("數據未載入，請確認是否包含 YEAR 欄位。")
+
+    # --- NEW: TAB 12 (Store Ranking - Total Sales & No Avg) ---
+    with tabs[12]:
+        st.subheader("🏢 全部門店排行榜 (Store Performance Ranking)")
+        
+        if not df_calc.empty:
+            num_weeks = len(selected_weeks) if 'selected_weeks' in locals() and selected_weeks else 1
+            st.caption(f"數據說明：銷售額為您選取的 {num_weeks} 週之 **總銷量**。")
+            
+            # 1. 聚合店鋪數據
+            store_rank = df_calc.groupby(['SHOP NUMBER', 'SHOP NAME', 'SUB REGION']).agg({
+                'SHOP INV': 'sum',
+                'Avg_Weekly_Sales': 'sum'
+            }).reset_index()
+            
+            # 2. 計算總銷量與 WOI
+            store_rank['Total Sales'] = store_rank['Avg_Weekly_Sales'] * num_weeks
+            store_rank['WOI'] = store_rank.apply(
+                lambda x: x['SHOP INV'] / x['Avg_Weekly_Sales'] if x['Avg_Weekly_Sales'] > 0 else 99, axis=1
+            )
+            
+            # 3. 排序 (依總銷量高到低)
+            store_rank = store_rank.sort_values('Total Sales', ascending=False)
+            
+            # 視覺化矩陣圖
+            st.markdown(f"#### 🔍 庫存 vs {num_weeks}週總銷量 矩陣")
+            fig_scatter = px.scatter(
+                store_rank, x='Total Sales', y='SHOP INV', color='WOI',
+                hover_data=['SHOP NAME', 'SHOP NUMBER', 'SUB REGION'],
+                color_continuous_scale='RdYlGn_r', range_color=[0, 20],
+                title="Store Matrix (Color = WOI)"
+            )
+            st.plotly_chart(fig_scatter, use_container_width=True)
+            
+            # 4. 表格顯示 (移除 Avg_Weekly_Sales)
+            st.divider()
+            st.markdown("#### 📋 門店詳細排行榜")
+            
+            def highlight_woi_simple(val):
+                if val > 20: return 'background-color: #FF5252; color: white'
+                if val < 4: return 'background-color: #FFD700; color: black'
+                return ''
+
+            # 丟棄計算用的平均銷量欄位
+            display_rank = store_rank.drop(columns=['Avg_Weekly_Sales'])
+
+            st.dataframe(
+                display_rank.style
+                .format({'SHOP INV': '{:,.0f}', 'Total Sales': '{:,.0f}', 'WOI': '{:.1f}'})
+                .applymap(highlight_woi_simple, subset=['WOI']),
+                use_container_width=True,
+                height=600
+            )
 else:
     st.info(t('upload_prompt'))
