@@ -37,6 +37,7 @@ DEFAULT_CAPA_DATA = [
     {'SHOP NUMBER': '1683', 'SUB REGION': '9F', 'SHOP NAME': 'SC VICENTE GUERRERO', 'CAPA_QTY': 212},
     {'SHOP NUMBER': '1171', 'SUB REGION': '9F', 'SHOP NAME': 'SC SAN JOSE TECAMAC', 'CAPA_QTY': 212},
     {'SHOP NUMBER': '3761', 'SUB REGION': '9F', 'SHOP NAME': 'BA TULYEHUALCO', 'CAPA_QTY': 207},
+    {'SHOP NUMBER': '3900', 'SUB REGION': '9F', 'SHOP NAME': 'SC COACALCO', 'CAPAimport streamlit as st
 import pandas as pd
 import datetime
 import numpy as np
